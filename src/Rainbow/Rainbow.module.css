@@ -1,0 +1,33 @@
+.rainbow {
+  display: flex;
+  height: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+  .rainbow {
+    flex-direction: column;
+  }
+}
+
+.rainbowError {
+  filter: grayscale();
+}
+
+.colorStripe {
+  appearance: none;
+  background-color: var(--hex);
+  border: 0;
+  cursor: pointer;
+  display: block;
+  flex-grow: var(--proportion);
+  margin: 0;
+  transition: flex-grow 1s ease-in-out;
+}
+
+.rainbowLoading .colorStripe {
+  cursor: wait;
+}
+
+.rainbowError .colorStripe {
+  cursor: not-allowed;
+}
