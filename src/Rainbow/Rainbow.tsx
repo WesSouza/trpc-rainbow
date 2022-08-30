@@ -1,35 +1,29 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { defaultColors } from '../constants/colors';
+import { trpc } from '../utils/trpc';
 import { ColorStripe } from './ColorStripe';
 import styles from './Rainbow.module.css';
 
 export function Rainbow() {
   const [lock, setLock] = useState(false);
 
-  // Fake data
-  const [isFetching, setIsFetching] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const colors = {
-    data: defaultColors.map((color) => ({ ...color, count: Math.random() })),
-  };
-  useEffect(() => {
-    if (Math.random() > 0.8) {
-      setIsError(true);
-    }
-  }, []);
+  const colors = trpc.useQuery(['getColors']);
+  const vote = trpc.useMutation(['vote']);
 
-  const handleColorClick = useCallback((id: string) => {
-    setLock(true);
+  const { isFetching, isError } = colors;
 
-    // Fake mutation
-    console.log('vote for', id);
-    setIsFetching(true);
-    setTimeout(() => {
-      setIsFetching(false);
-      setLock(false);
-    }, 100);
-  }, []);
+  const handleColorClick = useCallback(
+    (id: string) => {
+      setLock(true);
+
+      vote
+        .mutateAsync(id)
+        .then(() => colors.refetch())
+        .finally(() => setLock(false));
+    },
+    [colors, vote],
+  );
 
   const rainbowClassName = useMemo(
     () =>
