@@ -18,11 +18,11 @@ function mapVotes(colorVotes: Record<string, string>) {
 }
 
 export async function getColors() {
-  const colorVotes = await client.hgetall('colorVotes');
+  const colorVotes = await client.hgetall('trpcRainbowColorVotes');
   return mapVotes(colorVotes);
 }
 
 export async function vote(colorId: ColorId) {
-  await client.hincrby('colorVotes', colorId, 1);
+  await client.hincrby('trpcRainbowColorVotes', colorId, 1);
   return true;
 }
